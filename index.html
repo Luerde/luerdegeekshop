@@ -1,868 +1,679 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luerde GeekShop</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .page {
-            display: none;
-        }
-        .active {
-            display: block;
-        }
-        .fade-in {
-            animation: fadeIn 0.5s;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-        .geek-btn {
-            background-image: linear-gradient(to right, #FF6B6B, #4ECDC4);
-        }
-        .geek-btn:hover {
-            background-image: linear-gradient(to right, #FF8E8E, #6EDFD6);
-        }
-        .discount-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: #FF4757;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 5px;
-            font-weight: bold;
-            font-size: 0.8rem;
-        }
-        .cart-item {
-            transition: all 0.3s ease;
-        }
-        .cart-item:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Luerde GeekShop — Catálogo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .page{display:none}
+    .active{display:block}
+    .fade-in{animation:fadeIn .3s}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    .product-card{transition:transform .2s, box-shadow .2s}
+    .product-card:hover{transform:translateY(-4px);box-shadow:0 10px 20px rgba(0,0,0,.25)}
+    .geek-btn{background-image:linear-gradient(to right,#FF6B6B,#4ECDC4)}
+    .geek-btn:hover{background-image:linear-gradient(to right,#FF8E8E,#6EDFD6)}
+    .discount-badge{position:absolute;top:10px;right:10px;background:#FF4757;color:#fff;padding:3px 8px;border-radius:6px;font-weight:700;font-size:.8rem}
+    .chip{border:1px solid rgba(255,255,255,.12);}
+    .chip.active{border-color:rgba(168,85,247,1); box-shadow:0 0 0 2px rgba(168,85,247,.2) inset;}
+    .cart-item{transition:background-color .2s}
+    .cart-item:hover{background-color:rgba(255,255,255,.04)}
+    .sr-only-abs{position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden}
+  </style>
 </head>
 <body class="bg-gray-900 text-gray-100 font-sans min-h-screen flex flex-col">
-    <!-- Cabeçalho -->
-    <header class="bg-gray-800 shadow-lg sticky top-0 z-50">
-        <div class="container mx-auto px-4 py-3">
-            <div class="flex justify-between items-center">
-                <!-- Logo -->
-                <div class="flex items-center space-x-2">
-                    <img src="img/logoluerde.png" alt="Ícone da loja" class="h-10 w-auto">
-                    <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
-                        Luerde GeekShop
-                    </h1>
-                </div>
+  <!-- Cabeçalho -->
+  <header class="bg-gray-800 shadow-lg sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-3">
+      <div class="flex justify-between items-center gap-4">
+        <!-- Logo -->
+        <button onclick="showPage('home')" class="flex items-center space-x-2 group">
+          <img src="img/logoluerde.png" alt="Luerde GeekShop" class="h-10 w-auto rounded-md ring-1 ring-white/10">
+          <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 group-hover:opacity-90">
+            Luerde GeekShop
+          </h1>
+        </button>
 
-                <!-- Barra de pesquisa -->
-                <div class="hidden md:flex flex-1 mx-10">
-                    <div class="relative w-full max-w-xl">
-                        <input type="text" placeholder="Busque por mangás, action figures..." class="w-full px-4 py-2 rounded-full bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
-                        <button class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Ícones de navegação -->
-                <div class="flex items-center space-x-6">
-                    <button onclick="showPage('home')" class="text-gray-300 hover:text-white">
-                        <i class="fas fa-home"></i>
-                    </button>
-                    <button onclick="showPage('cart')" class="relative text-gray-300 hover:text-white">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
-                    </button>
-                    <button onclick="showPage('login')" class="text-gray-300 hover:text-white">
-                        <i class="fas fa-user"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- Navegação móvel -->
-    <nav class="md:hidden bg-gray-800 py-2 fixed bottom-0 w-full z-50">
-        <div class="flex justify-around items-center">
-            <button onclick="showPage('home')" class="flex flex-col items-center text-gray-300 hover:text-white px-4 py-2">
-                <i class="fas fa-home"></i>
-                <span class="text-xs mt-1">Início</span>
+        <!-- Barra de pesquisa -->
+        <div class="hidden md:flex flex-1 mx-2 md:mx-6">
+          <div class="relative w-full max-w-2xl">
+            <label for="search-input" class="sr-only-abs">Buscar produtos</label>
+            <input id="search-input" type="text" placeholder="Busque por mangás, action figures..." class="w-full px-4 py-2 rounded-full bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+            <button id="search-btn" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-300 hover:text-white" aria-label="Buscar">
+              <i class="fas fa-search"></i>
             </button>
-            <button onclick="showPage('cart')" class="flex flex-col items-center text-gray-300 hover:text-white px-4 py-2 relative">
-                <i class="fas fa-shopping-cart"></i>
-                <span id="mobile-cart-count" class="absolute top-0 right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
-                <span class="text-xs mt-1">Carrinho</span>
-            </button>
-            <button onclick="showPage('login')" class="flex flex-col items-center text-gray-300 hover:text-white px-4 py-2">
-                <i class="fas fa-user"></i>
-                <span class="text-xs mt-1">Login</span>
-            </button>
+          </div>
         </div>
-    </nav>
 
-    <!-- Conteúdo principal -->
-    <main class="flex-grow container mx-auto px-4 py-8 pb-20 md:pb-8">
-        <!-- Página Inicial -->
-        <div id="home" class="page fade-in active">
-            <!-- Banner Hero -->
-            <div class="relative overflow-hidden rounded-xl mb-12">
-                <img src="img/promoverao.png" alt="Banner promocional da miku" class="w-full h-auto">
-                <div class="absolute inset-0 bg-gradient-to-r from-black to-transparent opacity-80"></div>
-                <div class="absolute left-10 top-1/2 transform -translate-y-1/2 text-white max-w-md">
-                    <h2 class="text-4xl font-bold mb-2">Promoção de Verão</h2>
-                    <p class="text-lg mb-4">Até 50% de desconto nos mangás mais populares!</p>
-                    <button class="geek-btn text-white px-6 py-3 rounded-lg font-bold">Compre Agora</button>
-                </div>
+        <!-- Ícones -->
+        <nav class="flex items-center space-x-6">
+          <button onclick="showPage('home')" class="text-gray-300 hover:text-white" title="Início"><i class="fas fa-home"></i></button>
+          <button onclick="showPage('products')" class="text-gray-300 hover:text-white" title="Produtos"><i class="fas fa-box-open"></i></button>
+          <button onclick="showPage('cart')" class="relative text-gray-300 hover:text-white" title="Carrinho">
+            <i class="fas fa-shopping-cart"></i>
+            <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+          </button>
+          <button onclick="showPage('login')" class="text-gray-300 hover:text-white" title="Login"><i class="fas fa-user"></i></button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navegação móvel -->
+  <nav class="md:hidden bg-gray-800 py-2 fixed bottom-0 w-full z-50">
+    <div class="flex justify-around items-center">
+      <button onclick="showPage('home')" class="flex flex-col items-center text-gray-300 hover:text-white px-4 py-2">
+        <i class="fas fa-home"></i><span class="text-xs mt-1">Início</span>
+      </button>
+      <button onclick="showPage('products')" class="flex flex-col items-center text-gray-300 hover:text-white px-4 py-2">
+        <i class="fas fa-box-open"></i><span class="text-xs mt-1">Produtos</span>
+      </button>
+      <button onclick="showPage('cart')" class="flex flex-col items-center text-gray-300 hover:text-white px-4 py-2 relative">
+        <i class="fas fa-shopping-cart"></i>
+        <span id="mobile-cart-count" class="absolute top-0 right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+        <span class="text-xs mt-1">Carrinho</span>
+      </button>
+      <button onclick="showPage('login')" class="flex flex-col items-center text-gray-300 hover:text-white px-4 py-2">
+        <i class="fas fa-user"></i><span class="text-xs mt-1">Login</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Conteúdo -->
+  <main class="flex-grow container mx-auto px-4 py-8 pb-24 md:pb-8">
+    <!-- HOME -->
+    <section id="home" class="page fade-in active">
+      <!-- Hero -->
+      <div class="relative overflow-hidden rounded-xl mb-12">
+        <img src="img/promoverao.png" alt="Banner promocional" class="w-full h-auto">
+        <div class="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent"></div>
+        <div class="absolute left-6 sm:left-10 top-1/2 -translate-y-1/2 text-white max-w-md">
+          <h2 class="text-3xl sm:text-4xl font-bold mb-2">Promoção de Verão</h2>
+          <p class="text-base sm:text-lg mb-4">Até 50% de desconto nos mangás mais populares!</p>
+          <button id="go-manga" class="geek-btn text-white px-6 py-3 rounded-lg font-bold">Compre Agora</button>
+        </div>
+      </div>
+
+      <!-- Categorias -->
+      <section class="mb-12">
+        <h2 class="text-2xl font-bold mb-6 border-b border-gray-700 pb-2">Categorias</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="category-cards">
+          <button data-category="Mangás" class="bg-gray-800 rounded-lg overflow-hidden hover:bg-gray-700 transition cursor-pointer text-left">
+            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/b631220c-f449-4ecc-88aa-d8381764e08f.png" alt="" class="w-full h-32 object-cover">
+            <div class="p-4"><h3 class="font-bold">Mangás</h3><p class="text-sm text-gray-400">+100 títulos</p></div>
+          </button>
+          <button data-category="Action Figures" class="bg-gray-800 rounded-lg overflow-hidden hover:bg-gray-700 transition cursor-pointer text-left">
+            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/d51b2942-f4d6-4ef7-9829-f880e145e927.png" alt="" class="w-full h-32 object-cover">
+            <div class="p-4"><h3 class="font-bold">Action Figures</h3><p class="text-sm text-gray-400">Colecionáveis</p></div>
+          </button>
+          <button data-category="Vestuário" class="bg-gray-800 rounded-lg overflow-hidden hover:bg-gray-700 transition cursor-pointer text-left">
+            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/a786bc2e-920e-4103-b1f1-44776757fb5a.png" alt="" class="w-full h-32 object-cover">
+            <div class="p-4"><h3 class="font-bold">Vestuário</h3><p class="text-sm text-gray-400">Roupas Geek</p></div>
+          </button>
+          <button data-category="Acessórios" class="bg-gray-800 rounded-lg overflow-hidden hover:bg-gray-700 transition cursor-pointer text-left">
+            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/96837b9f-cf7b-48d1-adab-debb31fa2a90.png" alt="" class="w-full h-32 object-cover">
+            <div class="p-4"><h3 class="font-bold">Acessórios</h3><p class="text-sm text-gray-400">+50 itens</p></div>
+          </button>
+        </div>
+      </section>
+
+      <!-- Destaques (render dinâmico) -->
+      <section class="mb-12">
+        <div class="flex items-end justify-between mb-2">
+          <h2 class="text-2xl font-bold border-b border-gray-700 pb-2">Destaques</h2>
+          <button onclick="showPage('products')" class="text-sm text-purple-400 hover:text-purple-300">Ver catálogo completo</button>
+        </div>
+        <div id="featured-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+      </section>
+
+      <!-- Novidades -->
+      <section>
+        <h2 class="text-2xl font-bold mb-6 border-b border-gray-700 pb-2">Novidades</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-gray-800 rounded-lg overflow-hidden">
+            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/da61bf6e-6e86-4816-8593-7b254ac3a052.png" class="w-full h-48 object-cover" alt="Colecionáveis">
+            <div class="p-4">
+              <h3 class="font-bold text-xl mb-2">Novos Colecionáveis</h3>
+              <p class="text-gray-300 mb-4">Chegaram edições limitadas das marcas mais queridas!</p>
+              <button class="geek-btn text-white px-4 py-2 rounded-md font-bold" onclick="filterAndGo('Action Figures')">Ver Mais</button>
             </div>
-
-            <!-- Categorias -->
-            <section class="mb-12">
-                <h2 class="text-2xl font-bold mb-6 border-b border-gray-700 pb-2">Categorias</h2>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="bg-gray-800 rounded-lg overflow-hidden hover:bg-gray-700 transition cursor-pointer">
-                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/b631220c-f449-4ecc-88aa-d8381764e08f.png" alt="Coleção de mangás organizados em prateleiras, capas coloridas mostrando personagens de anime populares" class="w-full h-32 object-cover">
-                        <div class="p-4">
-                            <h3 class="font-bold">Mangás</h3>
-                            <p class="text-sm text-gray-400">+100 títulos</p>
-                        </div>
-                    </div>
-                    <div class="bg-gray-800 rounded-lg overflow-hidden hover:bg-gray-700 transition cursor-pointer">
-                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/d51b2942-f4d6-4ef7-9829-f880e145e927.png" alt="Action figures de personagens de anime em pose de batalha, com detalhes realistas e bases temáticas" class="w-full h-32 object-cover">
-                        <div class="p-4">
-                            <h3 class="font-bold">Action Figures</h3>
-                            <p class="text-sm text-gray-400">Colecionáveis</p>
-                        </div>
-                    </div>
-                    <div class="bg-gray-800 rounded-lg overflow-hidden hover:bg-gray-700 transition cursor-pointer">
-                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/a786bc2e-920e-4103-b1f1-44776757fb5a.png" alt="Camisetas estampadas com personagens icônicos de anime, designs coloridos e exclusivos" class="w-full h-32 object-cover">
-                        <div class="p-4">
-                            <h3 class="font-bold">Vestuário</h3>
-                            <p class="text-sm text-gray-400">Roupas Geek</p>
-                        </div>
-                    </div>
-                    <div class="bg-gray-800 rounded-lg overflow-hidden hover:bg-gray-700 transition cursor-pointer">
-                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/96837b9f-cf7b-48d1-adab-debb31fa2a90.png" alt="Acessórios diversos como mochilas, canecas e chaveiros com temas de anime, organizados em mesa" class="w-full h-32 object-cover">
-                        <div class="p-4">
-                            <h3 class="font-bold">Acessórios</h3>
-                            <p class="text-sm text-gray-400">+50 itens</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Produtos em destaque -->
-            <section class="mb-12">
-                <h2 class="text-2xl font-bold mb-6 border-b border-gray-700 pb-2">Destaques</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    <!-- Produto 1 -->
-                    <div class="bg-gray-800 rounded-lg overflow-hidden shadow-md product-card transition duration-300 relative">
-                        <div class="discount-badge">-15%</div>
-                        <img src="https://m.media-amazon.com/images/I/61qZXeMEPtL._UF1000,1000_QL80_.jpg" alt="Capa do mangá Attack on Titan Volume 34, edição especial com personagens principais em fundo dramático" class="w-full h-64 object-cover">
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1">Attack on Titan Vol. 34</h3>
-                            <div class="flex items-center mb-2">
-                                <div class="flex text-yellow-400">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star-half-alt"></i>
-                                </div>
-                                <span class="text-sm text-gray-400 ml-2">(127)</span>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <span class="text-red-400 line-through text-sm">R$ 59,90</span>
-                                    <span class="text-white font-bold block">R$ 50,90</span>
-                                </div>
-                                <button onclick="addToCart(1, 'Attack on Titan Vol. 34', 50.90, 'https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/de32fc02-145b-4739-9036-7e2dfaa55afa.png')" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded-md text-sm">
-                                    <i class="fas fa-cart-plus"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Produto 2 -->
-                    <div class="bg-gray-800 rounded-lg overflow-hidden shadow-md product-card transition duration-300">
-                        <img src="https://images.tcdn.com.br/img/img_prod/758144/good_smile_vocaloid_piapro_characters_hatsune_miku_1_8_scale_16499_1_3a10ff8aff2d6639c6b9f337bdd879cd.jpg" alt="Action figure de Hatsune Miku, detalhes realistas em escala 1/6 com base temática" class="w-full h-64 object-cover">
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1">Hatsune Miku Figure</h3>
-                            <div class="flex items-center mb-2">
-                                <div class="flex text-yellow-400">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="far fa-star"></i>
-                                </div>
-                                <span class="text-sm text-gray-400 ml-2">(89)</span>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-white font-bold">R$ 249,90</span>
-                                <button onclick="addToCart(2, 'Hatsune Miku Figure', 249.90, 'https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/f8d1719f-88b7-4d35-a246-14e3b06cff09.png')" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded-md text-sm">
-                                    <i class="fas fa-cart-plus"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Produto 3 -->
-                    <div class="bg-gray-800 rounded-lg overflow-hidden shadow-md product-card transition duration-300 relative">
-                        <div class="discount-badge">-30%</div>
-                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/c70c9705-30ac-4d56-bd2d-f685f2bd6a47.png" alt="Camiseta preta com estampa digital de Dragon Ball Z, Goku Super Saiyajin em detalhes neon" class="w-full h-64 object-cover">
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1">Camiseta DBZ Goku SSJ</h3>
-                            <div class="flex items-center mb-2">
-                                <div class="flex text-yellow-400">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                </div>
-                                <span class="text-sm text-gray-400 ml-2">(214)</span>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <span class="text-red-400 line-through text-sm">R$ 89,90</span>
-                                    <span class="text-white font-bold block">R$ 62,90</span>
-                                </div>
-                                <button onclick="addToCart(3, 'Camiseta DBZ Goku SSJ', 62.90, 'https://placehold.co/300x400')" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded-md text-sm">
-                                    <i class="fas fa-cart-plus"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Produto 4 -->
-                    <div class="bg-gray-800 rounded-lg overflow-hidden shadow-md product-card transition duration-300">
-                        <img src="https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcRjyjU1a5Sti9pyL3SsVzuRox5mxWhPCtlKOg4wECAZDeXR1DGt4lrhP8cEW297gbdmeW4HgvvY6UZPRB7tVYTNu0s1E3-6EN-wMPYTg0t_kVuhy2heCjlo" alt="Caixa especial de Blu-ray de Demon Slayer: Mugen Train, edição limitada com extras" class="w-full h-64 object-cover">
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1">Demon Slayer: Mugen Train</h3>
-                            <div class="flex items-center mb-2">
-                                <div class="flex text-yellow-400">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                </div>
-                                <span class="text-sm text-gray-400 ml-2">(312)</span>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-white font-bold">R$ 179,90</span>
-                                <button onclick="addToCart(4, 'Demon Slayer: Mugen Train', 179.90, 'https://placehold.co/300x400')" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded-md text-sm">
-                                    <i class="fas fa-cart-plus"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Novidades -->
-            <section>
-                <h2 class="text-2xl font-bold mb-6 border-b border-gray-700 pb-2">Novidades</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-gray-800 rounded-lg overflow-hidden">
-                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/da61bf6e-6e86-4816-8593-7b254ac3a052.png" alt="Lançamentos exclusivos de marcas premium como Banpresto e Funko Pop, expostos em vitrine iluminada" class="w-full h-48 object-cover">
-                        <div class="p-4">
-                            <h3 class="font-bold text-xl mb-2">Novos Colecionáveis</h3>
-                            <p class="text-gray-300 mb-4">Chegaram as novas edições limitadas das marcas mais queridas dos fãs!</p>
-                            <button class="geek-btn text-white px-4 py-2 rounded-md font-bold">Ver Mais</button>
-                        </div>
-                    </div>
-                    <div class="bg-gray-800 rounded-lg overflow-hidden">
-                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/7a3fc38a-2642-43e4-9f11-eb2883b79a2d.png" alt="Evento de cosplayers com personagens variados, fundo de palco com logo do evento em neon" class="w-full h-48 object-cover">
-                        <div class="p-4">
-                            <h3 class="font-bold text-xl mb-2">Evento Geek</h3>
-                            <p class="text-gray-300 mb-4">Participe do nosso encontro de cosplay com descontos especiais!</p>
-                            <button class="geek-btn text-white px-4 py-2 rounded-md font-bold">Saiba Mais</button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </div>
-
-        <!-- Página do Carrinho -->
-        <div id="cart" class="page fade-in">
-            <div class="max-w-4xl mx-auto">
-                <h2 class="text-3xl font-bold mb-8 flex items-center">
-                    <i class="fas fa-shopping-cart mr-3 text-purple-500"></i> Seu Carrinho
-                </h2>
-
-                <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden">
-                    <!-- Itens do carrinho -->
-                    <div id="cart-items" class="divide-y divide-gray-700">
-                        <!-- Exemplo de item - será preenchido via JavaScript -->
-                        <div class="p-4 cart-item hidden" id="cart-item-template">
-                            <div class="flex items-center">
-                                <img src="" alt="" class="w-20 h-20 object-cover rounded-md mr-4 cart-item-image">
-                                <div class="flex-grow">
-                                    <h3 class="font-bold cart-item-name"></h3>
-                                    <div class="flex items-center mt-2">
-                                        <button class="cart-item-decrease bg-gray-700 text-white px-2 py-1 rounded-l-md">
-                                            <i class="fas fa-minus"></i>
-                                        </button>
-                                        <span class="cart-item-quantity bg-gray-700 text-white px-3 py-1">1</span>
-                                        <button class="cart-item-increase bg-gray-700 text-white px-2 py-1 rounded-r-md">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                        <span class="cart-item-price ml-4 font-bold"></span>
-                                    </div>
-                                </div>
-                                <button class="cart-item-remove text-red-500 hover:text-red-400 ml-4">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Resumo do pedido -->
-                    <div class="p-6 bg-gray-750">
-                        <div class="flex justify-between items-center mb-4">
-                            <span class="text-gray-300">Subtotal</span>
-                            <span id="cart-subtotal" class="font-bold">R$ 0,00</span>
-                        </div>
-                        <div class="flex justify-between items-center mb-4">
-                            <span class="text-gray-300">Frete</span>
-                            <span id="cart-shipping" class="font-bold">R$ 0,00</span>
-                        </div>
-                        <div class="flex justify-between items-center mb-6">
-                            <span class="text-gray-300">Descontos</span>
-                            <span id="cart-discount" class="font-bold text-green-500">-R$ 0,00</span>
-                        </div>
-                        <div class="flex justify-between items-center text-lg border-t border-gray-700 pt-4">
-                            <span class="font-bold">Total</span>
-                            <span id="cart-total" class="font-bold text-xl text-purple-400">R$ 0,00</span>
-                        </div>
-                        <button onclick="showPage('checkout')" class="geek-btn w-full text-white py-3 rounded-lg font-bold mt-6">
-                            Finalizar Compra
-                        </button>
-                        <button onclick="showPage('home')" class="w-full text-center text-purple-400 hover:text-purple-300 mt-4">
-                            <i class="fas fa-arrow-left mr-2"></i> Continuar Comprando
-                        </button>
-                    </div>
-                </div>
+          </div>
+          <div class="bg-gray-800 rounded-lg overflow-hidden">
+            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/7a3fc38a-2642-43e4-9f11-eb2883b79a2d.png" class="w-full h-48 object-cover" alt="Evento Geek">
+            <div class="p-4">
+              <h3 class="font-bold text-xl mb-2">Evento Geek</h3>
+              <p class="text-gray-300 mb-4">Encontro de cosplay com descontos especiais!</p>
+              <button class="geek-btn text-white px-4 py-2 rounded-md font-bold" onclick="showNotification('Em breve: agenda de eventos!')">Saiba Mais</button>
             </div>
+          </div>
         </div>
+      </section>
+    </section>
 
-        <!-- Página de Login -->
-        <div id="login" class="page fade-in">
-            <div class="max-w-md mx-auto bg-gray-800 rounded-xl shadow-lg overflow-hidden p-8">
-                <h2 class="text-3xl font-bold mb-8 text-center">
-                    <i class="fas fa-user-circle mr-2 text-purple-500"></i> Login
-                </h2>
+    <!-- PRODUTOS (catálogo completo) -->
+    <section id="products" class="page fade-in">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-3xl font-bold flex items-center"><i class="fas fa-box-open mr-3 text-purple-500"></i> Catálogo</h2>
+        <div class="flex gap-2 items-center">
+          <label class="text-sm text-gray-300">Ordenar:</label>
+          <select id="sort-select" class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2">
+            <option value="">Padrão</option>
+            <option value="price-asc">Preço: menor &rarr; maior</option>
+            <option value="price-desc">Preço: maior &rarr; menor</option>
+            <option value="rating-desc">Melhor avaliados</option>
+          </select>
+        </div>
+      </div>
 
-                <form id="login-form">
-                    <div class="mb-6">
-                        <label for="email" class="block text-gray-300 mb-2">E-mail</label>
-                        <input type="email" id="email" class="w-full px-4 py-3 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="seu@email.com" required>
-                    </div>
-                    <div class="mb-6">
-                        <label for="password" class="block text-gray-300 mb-2">Senha</label>
-                        <input type="password" id="password" class="w-full px-4 py-3 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="••••••••" required>
-                    </div>
-                    <div class="flex items-center justify-between mb-6">
-                        <div class="flex items-center">
-                            <input type="checkbox" id="remember" class="w-4 h-4 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500">
-                            <label for="remember" class="ml-2 text-sm text-gray-300">Lembrar de mim</label>
-                        </div>
-                        <a href="#" class="text-sm text-purple-400 hover:text-purple-300">Esqueceu a senha?</a>
-                    </div>
-                    <button type="submit" class="geek-btn w-full text-white py-3 rounded-lg font-bold mb-4">
-                        <i class="fas fa-sign-in-alt mr-2"></i> Entrar
-                    </button>
-                    <div class="text-center text-gray-400">
-                        Não tem uma conta? 
-                        <a href="#" class="text-purple-400 hover:text-purple-300 ml-1">Cadastre-se</a>
-                    </div>
-                </form>
+      <!-- Chips de categoria -->
+      <div id="chips" class="flex flex-wrap gap-2 mb-6">
+        <button class="chip px-3 py-1 rounded-full text-sm hover:bg-gray-800" data-chip="">Todos</button>
+        <button class="chip px-3 py-1 rounded-full text-sm hover:bg-gray-800" data-chip="Mangás">Mangás</button>
+        <button class="chip px-3 py-1 rounded-full text-sm hover:bg-gray-800" data-chip="Action Figures">Action Figures</button>
+        <button class="chip px-3 py-1 rounded-full text-sm hover:bg-gray-800" data-chip="Vestuário">Vestuário</button>
+        <button class="chip px-3 py-1 rounded-full text-sm hover:bg-gray-800" data-chip="Acessórios">Acessórios</button>
+      </div>
 
-                <div class="relative my-8">
-                    <div class="absolute inset-0 flex items-center">
-                        <div class="w-full border-t border-gray-700"></div>
-                    </div>
-                    <div class="relative flex justify-center text-sm">
-                        <span class="px-2 bg-gray-800 text-gray-400">ou entre com</span>
-                    </div>
+      <!-- Campo de busca (versão página) -->
+      <div class="mb-6">
+        <div class="relative max-w-xl">
+          <input id="search-input-page" type="text" placeholder="Buscar no catálogo..." class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700">
+          <button id="search-btn-page" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-300 hover:text-white"><i class="fas fa-search"></i></button>
+        </div>
+      </div>
+
+      <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+      <div id="empty-state" class="hidden text-center text-gray-400 mt-8">Nenhum produto encontrado.</div>
+    </section>
+
+    <!-- CARRINHO -->
+    <section id="cart" class="page fade-in">
+      <div class="max-w-4xl mx-auto">
+        <h2 class="text-3xl font-bold mb-8 flex items-center"><i class="fas fa-shopping-cart mr-3 text-purple-500"></i> Seu Carrinho</h2>
+        <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+          <div id="cart-items" class="divide-y divide-gray-700"></div>
+          <template id="cart-item-template">
+            <div class="p-4 cart-item">
+              <div class="flex items-center">
+                <img class="w-20 h-20 object-cover rounded-md mr-4 cart-item-image" alt="">
+                <div class="flex-grow">
+                  <h3 class="font-bold cart-item-name"></h3>
+                  <div class="flex items-center mt-2">
+                    <button class="cart-item-decrease bg-gray-700 text-white px-2 py-1 rounded-l-md"><i class="fas fa-minus"></i></button>
+                    <span class="cart-item-quantity bg-gray-700 text-white px-3 py-1">1</span>
+                    <button class="cart-item-increase bg-gray-700 text-white px-2 py-1 rounded-r-md"><i class="fas fa-plus"></i></button>
+                    <span class="cart-item-price ml-4 font-bold"></span>
+                  </div>
                 </div>
-
-                <div class="flex justify-center space-x-4">
-                    <button class="bg-gray-700 hover:bg-gray-600 text-white p-3 rounded-full">
-                        <i class="fab fa-google"></i>
-                    </button>
-                    <button class="bg-gray-700 hover:bg-gray-600 text-white p-3 rounded-full">
-                        <i class="fab fa-facebook-f"></i>
-                    </button>
-                    <button class="bg-gray-700 hover:bg-gray-600 text-white p-3 rounded-full">
-                        <i class="fab fa-twitter"></i>
-                    </button>
-                </div>
+                <button class="cart-item-remove text-red-500 hover:text-red-400 ml-4"><i class="fas fa-trash"></i></button>
+              </div>
             </div>
+          </template>
+
+          <div class="p-6 bg-gray-750">
+            <div class="flex justify-between items-center mb-4"><span class="text-gray-300">Subtotal</span><span id="cart-subtotal" class="font-bold">R$ 0,00</span></div>
+            <div class="flex justify-between items-center mb-4"><span class="text-gray-300">Frete</span><span id="cart-shipping" class="font-bold">R$ 0,00</span></div>
+            <div class="flex justify-between items-center mb-6"><span class="text-gray-300">Descontos</span><span id="cart-discount" class="font-bold text-green-500">-R$ 0,00</span></div>
+            <div class="flex justify-between items-center text-lg border-t border-gray-700 pt-4"><span class="font-bold">Total</span><span id="cart-total" class="font-bold text-xl text-purple-400">R$ 0,00</span></div>
+            <button onclick="showPage('checkout')" class="geek-btn w-full text-white py-3 rounded-lg font-bold mt-6">Finalizar Compra</button>
+            <button onclick="showPage('products')" class="w-full text-center text-purple-400 hover:text-purple-300 mt-4"><i class="fas fa-arrow-left mr-2"></i> Continuar Comprando</button>
+          </div>
         </div>
+      </div>
+    </section>
 
-        <!-- Página de Checkout -->
-        <div id="checkout" class="page fade-in">
-            <div class="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
-                <div class="md:col-span-2">
-                    <h2 class="text-3xl font-bold mb-8 flex items-center">
-                        <i class="fas fa-credit-card mr-3 text-purple-500"></i> Finalizar Compra
-                    </h2>
+    <!-- LOGIN -->
+    <section id="login" class="page fade-in">
+      <div class="max-w-md mx-auto bg-gray-800 rounded-xl shadow-lg overflow-hidden p-8">
+        <h2 class="text-3xl font-bold mb-8 text-center"><i class="fas fa-user-circle mr-2 text-purple-500"></i> Login</h2>
+        <form id="login-form">
+          <div class="mb-6">
+            <label for="email" class="block text-gray-300 mb-2">E-mail</label>
+            <input type="email" id="email" class="w-full px-4 py-3 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="seu@email.com" required>
+          </div>
+          <div class="mb-6">
+            <label for="password" class="block text-gray-300 mb-2">Senha</label>
+            <input type="password" id="password" class="w-full px-4 py-3 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="••••••••" required>
+          </div>
+          <div class="flex items-center justify-between mb-6">
+            <label class="flex items-center gap-2 text-sm text-gray-300"><input type="checkbox" id="remember" class="w-4 h-4 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500"> Lembrar de mim</label>
+            <a href="#" id="forgot-link" class="text-sm text-purple-400 hover:text-purple-300">Esqueceu a senha?</a>
+          </div>
+          <button class="geek-btn w-full text-white py-3 rounded-lg font-bold mb-4"><i class="fas fa-sign-in-alt mr-2"></i> Entrar</button>
+          <div class="text-center text-gray-400">Não tem uma conta? <a href="#" id="register-link" class="text-purple-400 hover:text-purple-300 ml-1">Cadastre-se</a></div>
+        </form>
+      </div>
+    </section>
 
-                    <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden p-6 mb-6">
-                        <h3 class="text-xl font-bold mb-4 border-b border-gray-700 pb-2">Informações de Entrega</h3>
-                        <form id="shipping-form">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                <div>
-                                    <label for="first-name" class="block text-gray-300 mb-1 text-sm">Nome</label>
-                                    <input type="text" id="first-name" class="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" required>
-                                </div>
-                                <div>
-                                    <label for="last-name" class="block text-gray-300 mb-1 text-sm">Sobrenome</label>
-                                    <input type="text" id="last-name" class="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" required>
-                                </div>
-                            </div>
-                            <div class="mb-4">
-                                <label for="address" class="block text-gray-300 mb-1 text-sm">Endereço</label>
-                                <input type="text" id="address" class="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" required>
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                                <div>
-                                    <label for="city" class="block text-gray-300 mb-1 text-sm">Cidade</label>
-                                    <input type="text" id="city" class="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" required>
-                                </div>
-                                <div>
-                                    <label for="state" class="block text-gray-300 mb-1 text-sm">Estado</label>
-                                    <select id="state" class="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" required>
-                                        <option value="">Selecione</option>
-                                        <option value="SP">São Paulo</option>
-                                        <option value="RJ">Rio de Janeiro</option>
-                                        <option value="MG">Minas Gerais</option>
-                                        <option value="ES">Espírito Santo</option>
-                                        <!-- Outros estados -->
-                                    </select>
-                                </div>
-                                <div>
-                                    <label for="zip" class="block text-gray-300 mb-1 text-sm">CEP</label>
-                                    <input type="text" id="zip" class="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" required>
-                                </div>
-                            </div>
-                            <div class="mb-4">
-                                <label for="phone" class="block text-gray-300 mb-1 text-sm">Telefone</label>
-                                <input type="tel" id="phone" class="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" required>
-                            </div>
-                            <div class="flex items-center">
-                                <input type="checkbox" id="save-info" class="w-4 h-4 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500">
-                                <label for="save-info" class="ml-2 text-sm text-gray-300">Salvar informações para próximas compras</label>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden p-6">
-                        <h3 class="text-xl font-bold mb-4 border-b border-gray-700 pb-2">Método de Pagamento</h3>
-                        <div class="space-y-4">
-                            <div class="flex items-center bg-gray-750 p-4 rounded-lg cursor-pointer hover:bg-gray-700">
-                                <input type="radio" id="credit-card" name="payment" class="w-5 h-5 text-purple-600 bg-gray-700 border-gray-600 focus:ring-purple-500" checked>
-                                <label for="credit-card" class="ml-3 flex items-center">
-                                    <i class="far fa-credit-card text-xl mr-2"></i>
-                                    <span>Cartão de Crédito</span>
-                                </label>
-                            </div>
-                            <div class="flex items-center bg-gray-750 p-4 rounded-lg cursor-pointer hover:bg-gray-700">
-                                <input type="radio" id="pix" name="payment" class="w-5 h-5 text-purple-600 bg-gray-700 border-gray-600 focus:ring-purple-500">
-                                <label for="pix" class="ml-3 flex items-center">
-                                    <i class="fas fa-qrcode text-xl mr-2"></i>
-                                    <span>PIX</span>
-                                </label>
-                            </div>
-                            <div class="flex items-center bg-gray-750 p-4 rounded-lg cursor-pointer hover:bg-gray-700">
-                                <input type="radio" id="boleto" name="payment" class="w-5 h-5 text-purple-600 bg-gray-700 border-gray-600 focus:ring-purple-500">
-                                <label for="boleto" class="ml-3 flex items-center">
-                                    <i class="fas fa-barcode text-xl mr-2"></i>
-                                    <span>Boleto Bancário</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div id="credit-card-form" class="mt-6">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                <div>
-                                    <label for="card-number" class="block text-gray-300 mb-1 text-sm">Número do Cartão</label>
-                                    <input type="text" id="card-number" class="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="1234 5678 9012 3456">
-                                </div>
-                                <div>
-                                    <label for="card-name" class="block text-gray-300 mb-1 text-sm">Nome no Cartão</label>
-                                    <input type="text" id="card-name" class="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Como escrito no cartão">
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                                <div>
-                                    <label for="card-expiry" class="block text-gray-300 mb-1 text-sm">Validade</label>
-                                    <input type="text" id="card-expiry" class="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="MM/AA">
-                                </div>
-                                <div>
-                                    <label for="card-cvv" class="block text-gray-300 mb-1 text-sm">CVV</label>
-                                    <input type="text" id="card-cvv" class="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="123">
-                                </div>
-                                <div class="flex items-end">
-                                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/d37286ad-2bc6-4af9-9cc7-2b597ec2fa70.png" alt="Logotipos de bandeiras de cartão de crédito (Visa, Mastercard, Amex, etc.) em cores contrastantes" class="h-8">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="pix-form" class="mt-6 hidden">
-                            <div class="bg-gray-750 rounded-lg p-4 text-center">
-                                <p class="mb-4">Escaneie o QR Code abaixo ou copie o código para realizar o pagamento via PIX</p>
-                                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/3597f670-4386-429b-9c67-f2f1ca52dba2.png" alt="QR Code para pagamento PIX com fundo branco e pixéis pretos, código legível para câmeras" class="mx-auto mb-4">
-                                <div class="bg-gray-700 p-3 rounded-lg mb-4">
-                                    <p class="font-mono text-sm break-all">00020126580014BR.GOV.BCB.PIX0111+558399876543213041520400005303986540520.005802BR5913LOJA GEEK SHOP6009SAO PAULO62070503***6304E6D6</p>
-                                </div>
-                                <button class="geek-btn text-white px-6 py-2 rounded-md font-bold">
-                                    <i class="fas fa-copy mr-2"></i> Copiar Código
-                                </button>
-                            </div>
-                        </div>
-
-                        <div id="boleto-form" class="mt-6 hidden">
-                            <div class="bg-gray-750 rounded-lg p-4 text-center">
-                                <p class="mb-4">Clique no botão abaixo para gerar seu boleto bancário</p>
-                                <button class="geek-btn text-white px-6 py-2 rounded-md font-bold">
-                                    <i class="fas fa-file-invoice-dollar mr-2"></i> Gerar Boleto
-                                </button>
-                                <p class="mt-3 text-sm text-gray-400">O boleto poderá ser impresso ou pago via internet banking</p>
-                            </div>
-                        </div>
-
-                        <div class="mt-6">
-                            <button id="place-order" class="geek-btn w-full text-white py-3 rounded-lg font-bold">
-                                <i class="fas fa-check-circle mr-2"></i> Confirmar Pedido
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="md:col-span-1">
-                    <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden sticky top-4">
-                        <div class="p-4 bg-gray-750">
-                            <h3 class="text-xl font-bold flex items-center">
-                                <i class="fas fa-receipt mr-2 text-purple-500"></i> Resumo do Pedido
-                            </h3>
-                        </div>
-                        <div class="p-4">
-                            <div id="checkout-items" class="divide-y divide-gray-700">
-                                <!-- Itens serão inseridos via JavaScript -->
-                            </div>
-                            <div class="pt-4 space-y-2">
-                                <div class="flex justify-between">
-                                    <span class="text-gray-300">Subtotal</span>
-                                    <span id="checkout-subtotal">R$ 0,00</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-gray-300">Frete</span>
-                                    <span id="checkout-shipping">R$ 0,00</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-gray-300">Desconto</span>
-                                    <span id="checkout-discount" class="text-green-500">-R$ 0,00</span>
-                                </div>
-                                <div class="flex justify-between font-bold text-lg pt-2 border-t border-gray-700 mt-2">
-                                    <span>Total</span>
-                                    <span id="checkout-total" class="text-purple-400">R$ 0,00</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <button onclick="showPage('cart')" class="w-full text-center text-purple-400 hover:text-purple-300 mt-4">
-                        <i class="fas fa-arrow-left mr-2"></i> Voltar ao Carrinho
-                    </button>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Rodapé -->
-    <footer class="bg-gray-800 py-8 mt-12">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <!-- CHECKOUT -->
+    <section id="checkout" class="page fade-in">
+      <div class="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
+        <div class="md:col-span-2">
+          <h2 class="text-3xl font-bold mb-8 flex items-center"><i class="fas fa-credit-card mr-3 text-purple-500"></i> Finalizar Compra</h2>
+          <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden p-6 mb-6">
+            <h3 class="text-xl font-bold mb-4 border-b border-gray-700 pb-2">Informações de Entrega</h3>
+            <form id="shipping-form">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div><label class="block text-gray-300 mb-1 text-sm" for="first-name">Nome</label><input id="first-name" class="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" required></div>
+                <div><label class="block text-gray-300 mb-1 text-sm" for="last-name">Sobrenome</label><input id="last-name" class="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" required></div>
+              </div>
+              <div class="mb-4"><label class="block text-gray-300 mb-1 text-sm" for="address">Endereço</label><input id="address" class="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" required></div>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div><label class="block text-gray-300 mb-1 text-sm" for="city">Cidade</label><input id="city" class="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" required></div>
                 <div>
-                    <h3 class="text-xl font-bold mb-4 text-purple-400">Luerde GeekShop</h3>
-                    <p class="text-gray-400 mb-4">Tudo o que você precisa do mundo geek em um só lugar!</p>
-                    <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-purple-400">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-purple-400">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-purple-400">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-purple-400">
-                            <i class="fab fa-youtube"></i>
-                        </a>
-                    </div>
+                  <label class="block text-gray-300 mb-1 text-sm" for="state">Estado</label>
+                  <select id="state" class="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" required>
+                    <option value="">Selecione</option><option>SP</option><option>RJ</option><option>MG</option><option>ES</option><option>PR</option><option>RS</option><option>SC</option><option>BA</option><option>PE</option><option>CE</option>
+                  </select>
                 </div>
-                <div>
-                    <h4 class="text-lg font-bold mb-4 text-white">Navegação</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-purple-400">Início</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-purple-400">Produtos</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-purple-400">Lançamentos</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-purple-400">Promoções</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-purple-400">Eventos</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-lg font-bold mb-4 text-white">Ajuda</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-purple-400">Central de Ajuda</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-purple-400">Política de Troca</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-purple-400">Envio e Entrega</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-purple-400">Pagamentos</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-purple-400">Contato</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-lg font-bold mb-4 text-white">Newsletter</h4>
-                    <p class="text-gray-400 mb-4">Assine nossa newsletter e receba ofertas exclusivas!</p>
-                    <div class="flex">
-                        <input type="email" placeholder="Seu e-mail" class="px-4 py-2 bg-gray-700 text-white rounded-l-lg focus:outline-none focus:ring-2 focus:ring-purple-500 w-full">
-                        <button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-r-lg">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
-                    </div>
-                </div>
+                <div><label class="block text-gray-300 mb-1 text-sm" for="zip">CEP</label><input id="zip" class="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" required></div>
+              </div>
+              <div class="mb-4"><label class="block text-gray-300 mb-1 text-sm" for="phone">Telefone</label><input id="phone" class="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" required></div>
+              <label class="flex items-center gap-2"><input type="checkbox" id="save-info" class="w-4 h-4 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500"> <span class="text-sm text-gray-300">Salvar informações para próximas compras</span></label>
+            </form>
+          </div>
+
+          <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden p-6">
+            <h3 class="text-xl font-bold mb-4 border-b border-gray-700 pb-2">Método de Pagamento</h3>
+            <div class="space-y-4">
+              <label class="flex items-center bg-gray-750 p-4 rounded-lg cursor-pointer hover:bg-gray-700"><input type="radio" id="credit-card" name="payment" class="w-5 h-5" checked> <span class="ml-3 flex items-center"><i class="far fa-credit-card text-xl mr-2"></i> Cartão de Crédito</span></label>
+              <label class="flex items-center bg-gray-750 p-4 rounded-lg cursor-pointer hover:bg-gray-700"><input type="radio" id="pix" name="payment" class="w-5 h-5"> <span class="ml-3 flex items-center"><i class="fas fa-qrcode text-xl mr-2"></i> PIX</span></label>
+              <label class="flex items-center bg-gray-750 p-4 rounded-lg cursor-pointer hover:bg-gray-700"><input type="radio" id="boleto" name="payment" class="w-5 h-5"> <span class="ml-3 flex items-center"><i class="fas fa-barcode text-xl mr-2"></i> Boleto</span></label>
             </div>
-            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
-                <p>© 2025 Luerde GeekShop. Todos os direitos reservados.</p>
+
+            <div id="credit-card-form" class="mt-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div><label class="block text-gray-300 mb-1 text-sm" for="card-number">Número do Cartão</label><input id="card-number" class="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="1234 5678 9012 3456"></div>
+                <div><label class="block text-gray-300 mb-1 text-sm" for="card-name">Nome no Cartão</label><input id="card-name" class="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Como no cartão"></div>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div><label class="block text-gray-300 mb-1 text-sm" for="card-expiry">Validade</label><input id="card-expiry" class="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="MM/AA"></div>
+                <div><label class="block text-gray-300 mb-1 text-sm" for="card-cvv">CVV</label><input id="card-cvv" class="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="123"></div>
+                <div class="flex items-end"><img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/d37286ad-2bc6-4af9-9cc7-2b597ec2fa70.png" alt="Bandeiras" class="h-8"></div>
+              </div>
             </div>
+
+            <div id="pix-form" class="mt-6 hidden">
+              <div class="bg-gray-750 rounded-lg p-4 text-center">
+                <p class="mb-4">Escaneie o QR Code ou copie o código PIX</p>
+                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/3597f670-4386-429b-9c67-f2f1ca52dba2.png" alt="QR Code PIX" class="mx-auto mb-4">
+                <div class="bg-gray-700 p-3 rounded-lg mb-4">
+                  <p id="pix-code" class="font-mono text-sm break-all">00020126580014BR.GOV.BCB.PIX0111+558399876543213041520400005303986540520.005802BR5913LOJA GEEK SHOP6009SAO PAULO62070503***6304E6D6</p>
+                </div>
+                <button id="copy-pix" class="geek-btn text-white px-6 py-2 rounded-md font-bold"><i class="fas fa-copy mr-2"></i> Copiar Código</button>
+              </div>
+            </div>
+
+            <div id="boleto-form" class="mt-6 hidden">
+              <div class="bg-gray-750 rounded-lg p-4 text-center">
+                <p class="mb-4">Clique para gerar seu boleto bancário</p>
+                <button id="gen-boleto" class="geek-btn text-white px-6 py-2 rounded-md font-bold"><i class="fas fa-file-invoice-dollar mr-2"></i> Gerar Boleto</button>
+                <p class="mt-3 text-sm text-gray-400">O boleto poderá ser impresso ou pago via internet banking.</p>
+              </div>
+            </div>
+
+            <div class="mt-6">
+              <button id="place-order" class="geek-btn w-full text-white py-3 rounded-lg font-bold"><i class="fas fa-check-circle mr-2"></i> Confirmar Pedido</button>
+            </div>
+          </div>
         </div>
-    </footer>
 
-    <script>
-        // Sistema de navegação entre páginas
-        function showPage(pageId) {
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
-            document.getElementById(pageId).classList.add('active', 'fade-in');
-            
-            // Atualizar o carrinho quando for mostrado
-            if (pageId === 'cart' || pageId === 'checkout') {
-                updateCart();
-                updateCheckout();
-            }
+        <aside class="md:col-span-1">
+          <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden sticky top-4">
+            <div class="p-4 bg-gray-750"><h3 class="text-xl font-bold flex items-center"><i class="fas fa-receipt mr-2 text-purple-500"></i> Resumo do Pedido</h3></div>
+            <div class="p-4">
+              <div id="checkout-items" class="divide-y divide-gray-700"></div>
+              <div class="pt-4 space-y-2">
+                <div class="flex justify-between"><span class="text-gray-300">Subtotal</span><span id="checkout-subtotal">R$ 0,00</span></div>
+                <div class="flex justify-between"><span class="text-gray-300">Frete</span><span id="checkout-shipping">R$ 0,00</span></div>
+                <div class="flex justify-between"><span class="text-gray-300">Desconto</span><span id="checkout-discount" class="text-green-500">-R$ 0,00</span></div>
+                <div class="flex justify-between font-bold text-lg pt-2 border-t border-gray-700 mt-2"><span>Total</span><span id="checkout-total" class="text-purple-400">R$ 0,00</span></div>
+              </div>
+            </div>
+          </div>
+          <button onclick="showPage('cart')" class="w-full text-center text-purple-400 hover:text-purple-300 mt-4"><i class="fas fa-arrow-left mr-2"></i> Voltar ao Carrinho</button>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <!-- Rodapé -->
+  <footer class="bg-gray-800 py-8 mt-12">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div>
+          <h3 class="text-xl font-bold mb-4 text-purple-400">Luerde GeekShop</h3>
+          <p class="text-gray-400 mb-4">Tudo do mundo geek em um só lugar!</p>
+          <div class="flex space-x-4">
+            <a href="#" class="text-gray-400 hover:text-purple-400" id="link-facebook" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="text-gray-400 hover:text-purple-400" id="link-twitter" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="text-gray-400 hover:text-purple-400" id="link-instagram" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="text-gray-400 hover:text-purple-400" id="link-youtube" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+        <div>
+          <h4 class="text-lg font-bold mb-4 text-white">Navegação</h4>
+          <ul class="space-y-2">
+            <li><a href="#" onclick="showPage('home')" class="text-gray-400 hover:text-purple-400">Início</a></li>
+            <li><a href="#" onclick="showPage('products')" class="text-gray-400 hover:text-purple-400">Produtos</a></li>
+            <li><a href="#" onclick="filterAndGo('Lançamentos')" class="text-gray-400 hover:text-purple-400">Lançamentos</a></li>
+            <li><a href="#" onclick="filterAndGo('Promoções')" class="text-gray-400 hover:text-purple-400">Promoções</a></li>
+            <li><a href="#" onclick="showNotification('Em breve: página de eventos!')" class="text-gray-400 hover:text-purple-400">Eventos</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-lg font-bold mb-4 text-white">Ajuda</h4>
+          <ul class="space-y-2">
+            <li><a href="#" onclick="showNotification('Central de ajuda em construção.')" class="text-gray-400 hover:text-purple-400">Central de Ajuda</a></li>
+            <li><a href="#" onclick="showNotification('Política de troca enviada para seu e-mail.')" class="text-gray-400 hover:text-purple-400">Política de Troca</a></li>
+            <li><a href="#" onclick="showNotification('Prazos e formas de envio exibidos no checkout.')" class="text-gray-400 hover:text-purple-400">Envio e Entrega</a></li>
+            <li><a href="#" onclick="showNotification('Aceitamos Cartão, PIX e Boleto.')" class="text-gray-400 hover:text-purple-400">Pagamentos</a></li>
+            <li><a href="#" onclick="showNotification('Contato: contato@luerdegeekshop.com')" class="text-gray-400 hover:text-purple-400">Contato</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-lg font-bold mb-4 text-white">Newsletter</h4>
+          <p class="text-gray-400 mb-4">Assine e receba ofertas exclusivas!</p>
+          <form id="newsletter-form" class="flex">
+            <label class="sr-only-abs" for="newsletter-email">E-mail</label>
+            <input id="newsletter-email" type="email" placeholder="Seu e-mail" class="px-4 py-2 bg-gray-700 text-white rounded-l-lg focus:outline-none focus:ring-2 focus:ring-purple-500 w-full" required>
+            <button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-r-lg"><i class="fas fa-paper-plane"></i></button>
+          </form>
+        </div>
+      </div>
+      <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
+        <p>© 2025 Luerde GeekShop. Todos os direitos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* ========== DADOS DO CATÁLOGO ========== */
+    const CATALOG = [
+      {id:1, name:'Attack on Titan Vol. 34', price:50.90, image:'https://m.media-amazon.com/images/I/61qZXeMEPtL._UF1000,1000_QL80_.jpg', category:'Mangás', rating:4.5, discount:0.15, tags:['Promoções','Lançamentos'], featured:true},
+      {id:2, name:'Hatsune Miku Figure', price:249.90, image:'https://images.tcdn.com.br/img/img_prod/758144/good_smile_vocaloid_piapro_characters_hatsune_miku_1_8_scale_16499_1_3a10ff8aff2d6639c6b9f337bdd879cd.jpg', category:'Action Figures', rating:4.0, discount:0, tags:['Lançamentos'], featured:true},
+      {id:3, name:'Camiseta DBZ Goku SSJ', price:62.90, image:'https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/c70c9705-30ac-4d56-bd2d-f685f2bd6a47.png', category:'Vestuário', rating:5.0, discount:0.30, tags:['Promoções'], featured:true},
+      {id:4, name:'Demon Slayer: Mugen Train (Blu-ray)', price:179.90, image:'https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcRjyjU1a5Sti9pyL3SsVzuRox5mxWhPCtlKOg4wECAZDeXR1DGt4lrhP8cEW297gbdmeW4HgvvY6UZPRB7tVYTNu0s1E3-6EN-wMPYTg0t_kVuhy2heCjlo', category:'Acessórios', rating:5.0, discount:0, tags:['Lançamentos'], featured:false},
+      {id:5, name:'One Piece Vol. 100', price:49.90, image:'https://placehold.co/400x550?text=One+Piece+100', category:'Mangás', rating:4.8, discount:0.10, tags:['Lançamentos'], featured:false},
+      {id:6, name:'Naruto Vol. 1', price:39.90, image:'https://placehold.co/400x550?text=Naruto+1', category:'Mangás', rating:4.6, discount:0, tags:[''], featured:false},
+      {id:7, name:'Funko Pop! Tanjiro', price:119.90, image:'https://placehold.co/400x400?text=Funko+Tanjiro', category:'Action Figures', rating:4.2, discount:0.05, tags:['Promoções'], featured:false},
+      {id:8, name:'Camiseta One Piece', price:69.90, image:'https://placehold.co/400x400?text=Camiseta+OP', category:'Vestuário', rating:4.0, discount:0, tags:[''], featured:false},
+      {id:9, name:'Caneca Zelda', price:49.90, image:'https://placehold.co/400x400?text=Caneca+Zelda', category:'Acessórios', rating:4.7, discount:0.20, tags:['Promoções'], featured:false},
+      {id:10, name:'Action Figure Luffy', price:199.90, image:'https://placehold.co/400x400?text=AF+Luffy', category:'Action Figures', rating:4.9, discount:0, tags:['Lançamentos'], featured:false},
+      {id:11, name:'Moletom Naruto', price:159.90, image:'https://placehold.co/400x400?text=Moletom+Naruto', category:'Vestuário', rating:4.3, discount:0.15, tags:['Promoções'], featured:false},
+      {id:12, name:'Chaveiro Pokémon', price:24.90, image:'https://placehold.co/400x400?text=Chaveiro+Pokemon', category:'Acessórios', rating:4.1, discount:0, tags:[''], featured:false},
+    ];
+
+    /* ========== ESTADO GLOBAL ========== */
+    let cart = JSON.parse(localStorage.getItem('cart')||'[]');
+    let filters = { search:'', category:'', sort:'' };
+
+    /* ========== UTIL ========== */
+    const currency = v => 'R$ ' + v.toFixed(2).replace('.',',');
+    function showNotification(message){
+      const n = document.createElement('div');
+      n.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+      n.textContent = message;
+      document.body.appendChild(n);
+      setTimeout(()=>{ n.classList.add('opacity-0','transition-opacity','duration-300'); setTimeout(()=>n.remove(),300); }, 2200);
+    }
+
+    /* ========== NAVEGAÇÃO entre páginas ========== */
+    function showPage(id){
+      document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+      const el = document.getElementById(id);
+      if(el){ el.classList.add('active','fade-in'); }
+      if(id==='cart' || id==='checkout'){ updateCart(); updateCheckout(); }
+      if(id==='products'){ renderProducts(); }
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    /* ========== RENDERIZAÇÃO DE PRODUTOS ========== */
+    function productCard(p){
+      const hasDiscount = p.discount && p.discount>0;
+      const priceFinal = hasDiscount ? p.price*(1-p.discount) : p.price;
+      const stars = '★★★★★☆☆☆☆☆'.slice(5-Math.round(p.rating),10-Math.round(p.rating));
+      return `
+        <div class="bg-gray-800 rounded-lg overflow-hidden shadow-md product-card relative">
+          ${hasDiscount?`<div class="discount-badge">-${Math.round(p.discount*100)}%</div>`:''}
+          <img src="${p.image}" alt="${p.name}" class="w-full h-64 object-cover">
+          <div class="p-4">
+            <h3 class="font-bold text-lg mb-1">${p.name}</h3>
+            <div class="flex items-center mb-2">
+              <div class="flex text-yellow-400" aria-hidden="true">
+                ${Array.from({length:5}).map((_,i)=>`<i class="fas fa-star${i<Math.round(p.rating)?'':'-half-alt'}" style="opacity:${i<Math.round(p.rating)?1:.3}"></i>`).join('')}
+              </div>
+              <span class="text-sm text-gray-400 ml-2">${p.rating.toFixed(1)}</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <div>
+                ${hasDiscount?`<span class="text-red-400 line-through text-sm">${currency(p.price)}</span>`:''}
+                <span class="text-white font-bold block">${currency(priceFinal)}</span>
+              </div>
+              <button class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded-md text-sm" onclick="addToCart(${p.id})"><i class="fas fa-cart-plus"></i></button>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    function renderFeatured(){
+      const grid = document.getElementById('featured-grid');
+      if(!grid) return;
+      grid.innerHTML = CATALOG.filter(p=>p.featured).slice(0,8).map(productCard).join('');
+    }
+
+    function applyFilters(list){
+      let out = [...list];
+      if(filters.category){
+        if(filters.category==='Promoções'){
+          out = out.filter(p=>p.discount && p.discount>0);
+        }else if(filters.category==='Lançamentos'){
+          out = out.filter(p=>p.tags.includes('Lançamentos'));
+        }else{
+          out = out.filter(p=>p.category===filters.category);
         }
+      }
+      if(filters.search){
+        const s = filters.search.toLowerCase();
+        out = out.filter(p=>[p.name,p.category,(p.tags||[]).join(' ')].join(' ').toLowerCase().includes(s));
+      }
+      switch(filters.sort){
+        case 'price-asc': out.sort((a,b)=>(a.price*(1-(a.discount||0)))-(b.price*(1-(b.discount||0)))); break;
+        case 'price-desc': out.sort((a,b)=>(b.price*(1-(b.discount||0)))-(a.price*(1-(a.discount||0)))); break;
+        case 'rating-desc': out.sort((a,b)=>b.rating-a.rating); break;
+      }
+      return out;
+    }
 
-        // Sistema de carrinho
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    function renderProducts(){
+      const grid = document.getElementById('products-grid');
+      const empty = document.getElementById('empty-state');
+      const items = applyFilters(CATALOG);
+      grid.innerHTML = items.map(productCard).join('');
+      empty.classList.toggle('hidden', items.length>0);
+      highlightChips();
+    }
 
-        // Adicionar ao carrinho
-        function addToCart(id, name, price, image) {
-            let existingItem = cart.find(item => item.id === id);
-            
-            if (existingItem) {
-                existingItem.quantity += 1;
-            } else {
-                cart.push({
-                    id,
-                    name,
-                    price,
-                    image,
-                    quantity: 1
-                });
-            }
-            
-            saveCart();
-            updateCartCount();
-            
-            // Mostrar notificação
-            showNotification(`"${name}" foi adicionado ao carrinho!`);
-        }
+    function highlightChips(){
+      document.querySelectorAll('#chips .chip').forEach(ch=>{
+        const val = ch.getAttribute('data-chip');
+        ch.classList.toggle('active', (val||'')===filters.category);
+      });
+    }
 
-        // Salvar carrinho no localStorage
-        function saveCart() {
-            localStorage.setItem('cart', JSON.stringify(cart));
-        }
+    /* ========== FILTRO AUX ========== */
+    function filterAndGo(cat){
+      filters.category = cat==='Todos' ? '' : cat;
+      showPage('products');
+      renderProducts();
+    }
 
-        // Atualizar contador do carrinho
-        function updateCartCount() {
-            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
-            document.getElementById('cart-count').textContent = totalItems;
-            document.getElementById('mobile-cart-count').textContent = totalItems;
-        }
+    /* ========== CARRINHO ========== */
+    function saveCart(){ localStorage.setItem('cart', JSON.stringify(cart)); }
+    function updateCartCount(){
+      const total = cart.reduce((t,i)=>t+i.quantity,0);
+      document.getElementById('cart-count').textContent = total;
+      document.getElementById('mobile-cart-count').textContent = total;
+    }
+    function addToCart(productId){
+      const p = CATALOG.find(x=>x.id===productId);
+      if(!p) return;
+      const existent = cart.find(i=>i.id===p.id);
+      if(existent){ existent.quantity += 1; } else {
+        cart.push({ id:p.id, name:p.name, price:p.price*(1-(p.discount||0)), image:p.image, quantity:1 });
+      }
+      saveCart(); updateCartCount(); showNotification(`"${p.name}" foi adicionado ao carrinho!`);
+    }
 
-        // Mostrar notificação
-        function showNotification(message) {
-            const notification = document.createElement('div');
-            notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in-out';
-            notification.textContent = message;
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.classList.add('opacity-0', 'transition-opacity', 'duration-300');
-                setTimeout(() => notification.remove(), 300);
-            }, 3000);
-        }
+    function updateCart(){
+      const list = document.getElementById('cart-items');
+      const tpl = document.getElementById('cart-item-template');
+      list.innerHTML = '';
+      let subtotal = 0;
+      cart.forEach(item=>{
+        const node = tpl.content.cloneNode(true);
+        node.querySelector('.cart-item-image').src = item.image;
+        node.querySelector('.cart-item-image').alt = item.name;
+        node.querySelector('.cart-item-name').textContent = item.name;
+        node.querySelector('.cart-item-quantity').textContent = item.quantity;
+        node.querySelector('.cart-item-price').textContent = currency(item.price*item.quantity);
+        node.querySelector('.cart-item-increase').addEventListener('click', ()=>{ item.quantity++; saveCart(); updateCart(); updateCartCount(); });
+        node.querySelector('.cart-item-decrease').addEventListener('click', ()=>{ if(item.quantity>1){ item.quantity--; saveCart(); updateCart(); updateCartCount(); } });
+        node.querySelector('.cart-item-remove').addEventListener('click', ()=>{ cart = cart.filter(x=>x.id!==item.id); saveCart(); updateCart(); updateCartCount(); });
+        list.appendChild(node);
+        subtotal += item.price*item.quantity;
+      });
+      const shipping = Math.max(9.90, subtotal*0.1);
+      const discount = subtotal>300 ? subtotal*0.1 : 0;
+      const total = subtotal + shipping - discount;
+      document.getElementById('cart-subtotal').textContent = currency(subtotal);
+      document.getElementById('cart-shipping').textContent = currency(shipping);
+      document.getElementById('cart-discount').textContent = '-' + currency(discount).replace('R$ ', '');
+      document.getElementById('cart-total').textContent = currency(total);
+    }
 
-        // Atualizar visualização do carrinho
-        function updateCart() {
-            const cartItems = document.getElementById('cart-items');
-            cartItems.innerHTML = '';
-            
-            let subtotal = 0;
-            
-            cart.forEach(item => {
-                const template = document.getElementById('cart-item-template').cloneNode(true);
-                template.classList.remove('hidden');
-                
-                template.querySelector('.cart-item-name').textContent = item.name;
-                template.querySelector('.cart-item-quantity').textContent = item.quantity;
-                template.querySelector('.cart-item-price').textContent = `R$ ${(item.price * item.quantity).toFixed(2)}`;
-                template.querySelector('.cart-item-image').src = item.image;
-                template.querySelector('.cart-item-image').alt = `Imagem do produto ${item.name}`;
-                
-                // Configurar botões de aumentar/diminuir quantidade
-                template.querySelector('.cart-item-increase').addEventListener('click', () => {
-                    item.quantity += 1;
-                    saveCart();
-                    updateCart();
-                    updateCartCount();
-                });
-                
-                template.querySelector('.cart-item-decrease').addEventListener('click', () => {
-                    if (item.quantity > 1) {
-                        item.quantity -= 1;
-                        saveCart();
-                        updateCart();
-                        updateCartCount();
-                    }
-                });
-                
-                // Configurar botão de remover
-                template.querySelector('.cart-item-remove').addEventListener('click', () => {
-                    cart = cart.filter(cartItem => cartItem.id !== item.id);
-                    saveCart();
-                    updateCart();
-                    updateCartCount();
-                });
-                
-                cartItems.appendChild(template);
-                
-                subtotal += item.price * item.quantity;
-            });
-            
-            // Calcular frete (exemplo: 10% do subtotal com mínimo de R$9,90)
-            const shipping = Math.max(9.90, subtotal * 0.1);
-            
-            // Exemplo de cálculo de desconto (10% acima de R$300)
-            let discount = 0;
-            if (subtotal > 300) {
-                discount = subtotal * 0.1;
-            }
-            
-            const total = subtotal + shipping - discount;
-            
-            // Atualizar valores totais
-            document.getElementById('cart-subtotal').textContent = `R$ ${subtotal.toFixed(2)}`;
-            document.getElementById('cart-shipping').textContent = `R$ ${shipping.toFixed(2)}`;
-            document.getElementById('cart-discount').textContent = `-R$ ${discount.toFixed(2)}`;
-            document.getElementById('cart-total').textContent = `R$ ${total.toFixed(2)}`;
-        }
+    function updateCheckout(){
+      const box = document.getElementById('checkout-items');
+      box.innerHTML='';
+      let subtotal = 0;
+      cart.forEach(item=>{
+        const el = document.createElement('div');
+        el.className='py-3';
+        el.innerHTML = `
+          <div class="flex justify-between items-center">
+            <div class="flex items-center">
+              <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-md mr-3">
+              <div><h4 class="font-medium">${item.name}</h4><p class="text-sm text-gray-400">${item.quantity}x ${currency(item.price)}</p></div>
+            </div>
+            <span class="font-medium">${currency(item.price*item.quantity)}</span>
+          </div>`;
+        box.appendChild(el);
+        subtotal += item.price*item.quantity;
+      });
+      const shipping = Math.max(9.90, subtotal*0.1);
+      const discount = subtotal>300 ? subtotal*0.1 : 0;
+      const total = subtotal + shipping - discount;
+      document.getElementById('checkout-subtotal').textContent = currency(subtotal);
+      document.getElementById('checkout-shipping').textContent = currency(shipping);
+      document.getElementById('checkout-discount').textContent = '-' + currency(discount).replace('R$ ', '');
+      document.getElementById('checkout-total').textContent = currency(total);
+    }
 
-        // Atualizar visualização do checkout
-        function updateCheckout() {
-            const checkoutItems = document.getElementById('checkout-items');
-            checkoutItems.innerHTML = '';
-            
-            let subtotal = 0;
-            
-            cart.forEach(item => {
-                const itemElement = document.createElement('div');
-                itemElement.className = 'py-3';
-                itemElement.innerHTML = `
-                    <div class="flex justify-between items-center">
-                        <div class="flex items-center">
-                            <img src="${item.image}" alt="Imagem do produto ${item.name}" class="w-16 h-16 object-cover rounded-md mr-3">
-                            <div>
-                                <h4 class="font-medium">${item.name}</h4>
-                                <p class="text-sm text-gray-400">${item.quantity}x R$ ${item.price.toFixed(2)}</p>
-                            </div>
-                        </div>
-                        <span class="font-medium">R$ ${(item.price * item.quantity).toFixed(2)}</span>
-                    </div>
-                `;
-                checkoutItems.appendChild(itemElement);
-                
-                subtotal += item.price * item.quantity;
-            });
-            
-            // Calcular frete (mesma lógica do carrinho)
-            const shipping = Math.max(9.90, subtotal * 0.1);
-            
-            // Exemplo de cálculo de desconto (10% acima de R$300)
-            let discount = 0;
-            if (subtotal > 300) {
-                discount = subtotal * 0.1;
-            }
-            
-            const total = subtotal + shipping - discount;
-            
-            // Atualizar valores totais
-            document.getElementById('checkout-subtotal').textContent = `R$ ${subtotal.toFixed(2)}`;
-            document.getElementById('checkout-shipping').textContent = `R$ ${shipping.toFixed(2)}`;
-            document.getElementById('checkout-discount').textContent = `-R$ ${discount.toFixed(2)}`;
-            document.getElementById('checkout-total').textContent = `R$ ${total.toFixed(2)}`;
-        }
+    /* ========== EVENTOS ========== */
+    // Chips
+    document.addEventListener('click', (e)=>{
+      const chip = e.target.closest('#chips .chip');
+      if(chip){
+        filters.category = chip.getAttribute('data-chip')||''; renderProducts();
+      }
+    });
 
-        // Alternar entre métodos de pagamento
-        document.querySelectorAll('input[name="payment"]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                document.getElementById('credit-card-form').classList.add('hidden');
-                document.getElementById('pix-form').classList.add('hidden');
-                document.getElementById('boleto-form').classList.add('hidden');
-                
-                if (this.id === 'credit-card') {
-                    document.getElementById('credit-card-form').classList.remove('hidden');
-                } else if (this.id === 'pix') {
-                    document.getElementById('pix-form').classList.remove('hidden');
-                } else if (this.id === 'boleto') {
-                    document.getElementById('boleto-form').classList.remove('hidden');
-                }
-            });
-        });
+    // Sort
+    document.getElementById('sort-select').addEventListener('change', (e)=>{
+      filters.sort = e.target.value; renderProducts();
+    });
 
-        // Place order button
-        document.getElementById('place-order').addEventListener('click', function() {
-            const shippingForm = document.getElementById('shipping-form');
-            const isValid = shippingForm.checkValidity();
-            
-            if (isValid) {
-                showNotification('Pedido realizado com sucesso! Obrigado por comprar conosco!');
-                cart = [];
-                saveCart();
-                updateCartCount();
-                setTimeout(() => showPage('home'), 2000);
-            } else {
-                showNotification('Por favor, preencha todos os campos obrigatórios!');
-                shippingForm.reportValidity();
-            }
-        });
+    // Busca (header)
+    const searchInput = document.getElementById('search-input');
+    document.getElementById('search-btn').addEventListener('click', ()=>{ filters.search = (searchInput.value||'').trim(); showPage('products'); renderProducts(); });
+    searchInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); document.getElementById('search-btn').click(); } });
 
-        // Inicialização
-        document.addEventListener('DOMContentLoaded', function() {
-            updateCartCount();
-        });
-    </script>
+    // Busca (página)
+    const searchInputPage = document.getElementById('search-input-page');
+    document.getElementById('search-btn-page').addEventListener('click', ()=>{ filters.search = (searchInputPage.value||'').trim(); renderProducts(); });
+    searchInputPage.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); document.getElementById('search-btn-page').click(); } });
+
+    // Categorias (cards da home)
+    document.getElementById('category-cards').addEventListener('click', (e)=>{
+      const card = e.target.closest('[data-category]');
+      if(card){ filters.category = card.getAttribute('data-category'); showPage('products'); renderProducts(); }
+    });
+
+    // CTA do Hero
+    document.getElementById('go-manga').addEventListener('click', ()=> filterAndGo('Mangás'));
+
+    // Alternar métodos de pagamento
+    document.querySelectorAll('input[name="payment"]').forEach(radio=>{
+      radio.addEventListener('change', function(){
+        document.getElementById('credit-card-form').classList.add('hidden');
+        document.getElementById('pix-form').classList.add('hidden');
+        document.getElementById('boleto-form').classList.add('hidden');
+        if(this.id==='credit-card'){ document.getElementById('credit-card-form').classList.remove('hidden'); }
+        if(this.id==='pix'){ document.getElementById('pix-form').classList.remove('hidden'); }
+        if(this.id==='boleto'){ document.getElementById('boleto-form').classList.remove('hidden'); }
+      });
+    });
+
+    // PIX copiar
+    document.getElementById('copy-pix').addEventListener('click', async()=>{
+      const code = document.getElementById('pix-code').textContent;
+      try{ await navigator.clipboard.writeText(code); showNotification('Código PIX copiado!'); }catch{ showNotification('Não foi possível copiar.'); }
+    });
+
+    // Boleto fake
+    document.getElementById('gen-boleto').addEventListener('click', ()=>{
+      const linha = '34191.79001 01043.510047 91020.150008 1 96310000010000';
+      showNotification('Boleto gerado! Linha digitável: '+linha);
+    });
+
+    // Login (falso)
+    document.getElementById('login-form').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      showNotification('Bem-vindo, '+email+'!');
+      showPage('home');
+    });
+    document.getElementById('forgot-link').addEventListener('click', (e)=>{ e.preventDefault(); showNotification('Link de recuperação enviado ao seu e-mail.'); });
+    document.getElementById('register-link').addEventListener('click', (e)=>{ e.preventDefault(); showNotification('Cadastro em breve!'); });
+
+    // Newsletter
+    document.getElementById('newsletter-form').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const mail = document.getElementById('newsletter-email').value.trim();
+      if(mail){ showNotification('Obrigado por assinar nossa newsletter!'); e.target.reset(); }
+    });
+
+    // Concluir pedido
+    document.getElementById('place-order').addEventListener('click', ()=>{
+      const shippingForm = document.getElementById('shipping-form');
+      if(!cart.length){ showNotification('Seu carrinho está vazio.'); return; }
+      if(shippingForm.checkValidity()){
+        showNotification('Pedido realizado com sucesso!');
+        cart = []; saveCart(); updateCartCount(); setTimeout(()=>showPage('home'), 1200);
+      } else {
+        showNotification('Preencha os campos obrigatórios.');
+        shippingForm.reportValidity();
+      }
+    });
+
+    // Inicialização
+    document.addEventListener('DOMContentLoaded', ()=>{
+      updateCartCount();
+      renderFeatured();
+      renderProducts();
+    });
+  </script>
 </body>
 </html>
-
