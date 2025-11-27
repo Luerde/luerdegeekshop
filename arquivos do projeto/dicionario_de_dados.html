@@ -201,7 +201,5 @@
         </tbody>
     </table>
 
-    <h2>Insight Crucial</h2>
-    <p>Uma descoberta arquitetural importante é que a tabela <code>orders</code> não tem relacionamentos com as tabelas <code>users</code> ou <code>products</code>. Isso significa que, em seu estado atual, a aplicação não pode armazenar qual usuário fez um pedido ou quais produtos foram incluídos nele. Isso sugere que a funcionalidade de pedidos está incompleta. Qualquer trabalho nas funcionalidades de checkout ou histórico de pedidos exigiria a implementação desses relacionamentos (por exemplo, adicionando <code>@ManyToOne</code> para <code>User</code> na entidade <code>Order</code> e um relacionamento <code>@ManyToMany</code> para <code>Product</code>).</p>
-</body>
+    </body>
 </html>
