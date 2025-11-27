@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro - Luerde GeekShop</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-gray-900 text-gray-100 flex flex-col min-h-screen">
+  <header class="bg-gray-800 p-4 flex justify-between items-center">
+    <a href="/"><img src="/images/logo.png" alt="Luerde GeekShop Logo" class="h-16"></a>
+    <nav class="flex items-center">
+      <a href="/" class="px-2">Início</a>
+      <a href="/produtos" class="px-2">Produtos</a>
+      <a href="/carrinho" class="px-2">Carrinho</a>
+      <a href="/sobre" class="px-2">Sobre Nós</a>
+      <a href="/contato" class="px-2">Contato</a>
+      <span sec:authorize="isAuthenticated()">
+        <span class="px-2">Olá, <span sec:authentication="name"></span></span>
+        <a href="/logout" class="px-2">Sair</a>
+      </span>
+      <span sec:authorize="!isAuthenticated()">
+        <a href="/login" class="px-2">Login</a>
+      </span>
+    </nav>
+  </header>
+
+  <main class="p-6 max-w-md mx-auto flex-grow w-full">
+    <h2 class="text-2xl font-bold mb-4 text-center">Cadastro</h2>
+    <form action="/register" method="post" class="space-y-4">
+      <div th:if="${param.error}" class="p-2 rounded text-center bg-red-500 text-white">Erro no cadastro.</div>
+      <div th:if="${param.success}" class="p-2 rounded text-center bg-green-500 text-white">Cadastro realizado com sucesso! Faça login.</div>
+      
+      <input type="text" name="username" placeholder="Nome de usuário" required class="px-4 py-2 rounded bg-gray-800 w-full">
+      <input type="email" name="email" placeholder="E-mail" required class="px-4 py-2 rounded bg-gray-800 w-full">
+      <input type="password" name="password" placeholder="Senha" required class="px-4 py-2 rounded bg-gray-800 w-full">
+      <input type="text" name="securityQuestion" placeholder="Pergunta de Segurança" required class="px-4 py-2 rounded bg-gray-800 w-full">
+      <input type="text" name="securityAnswer" placeholder="Resposta de Segurança" required class="px-4 py-2 rounded bg-gray-800 w-full">
+      <button type="submit" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded w-full">Cadastrar</button>
+    </form>
+    <p class="mt-4 text-center">Já tem uma conta? <a href="/login" class="text-purple-400 hover:underline">Faça Login</a></p>
+  </main>
+
+  <footer class="bg-gray-800 text-gray-300 mt-10">
+    <div class="container mx-auto px-6 py-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div>
+          <h3 class="font-bold text-lg text-white mb-2">Luerde GeekShop</h3>
+          <p class="text-sm">Sua loja definitiva para tudo do universo geek.</p>
+        </div>
+        <div>
+          <h3 class="font-bold text-lg text-white mb-2">Links Rápidos</h3>
+          <ul class="space-y-2">
+            <li><a href="/sobre" class="hover:text-purple-400">Sobre Nós</a></li>
+            <li><a href="/contato" class="hover:text-purple-400">Contato</a></li>
+            <li><a href="/politica-privacidade" class="hover:text-purple-400">Política de Privacidade</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="font-bold text-lg text-white mb-2">Siga-nos</h3>
+          <p class="text-sm">Fique por dentro das novidades e promoções.</p>
+        </div>
+      </div>
+      <div class="mt-8 border-t border-gray-700 pt-4 text-center text-sm">
+        <p>© 2025 Luerde GeekShop. Todos os direitos reservados.</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

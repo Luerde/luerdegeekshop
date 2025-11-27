@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrinho - Luerde GeekShop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-gray-900 text-gray-100 flex flex-col min-h-screen">
+    <header class="bg-gray-800 p-4 flex justify-between items-center">
+        <a href="/"><img src="/images/logo.png" alt="Luerde GeekShop Logo" class="h-16"></a>
+            <nav class="flex items-center">
+              <a href="/" class="px-2">Início</a>
+              <a href="/produtos" class="px-2">Produtos</a>
+              <a href="/carrinho" class="px-2">Carrinho</a>
+              <span sec:authorize="isAuthenticated()">
+                <span class="px-2">Olá, <span sec:authentication="name"></span></span>
+                <a href="/logout" class="px-2">Sair</a>
+              </span>
+              <span sec:authorize="!isAuthenticated()">
+                <a href="/login" class="px-2">Login</a>
+              </span>
+            </nav>    </header>
+
+    <main class="p-6 flex-grow container mx-auto">
+        <h2 class="text-2xl font-bold mb-4">Seu Carrinho</h2>
+        
+        <!-- Itens do Carrinho -->
+        <div id="cart-items" class="space-y-4 mb-6">
+            <!-- Itens do carrinho serão carregados aqui pelo JavaScript -->
+        </div>
+
+        <!-- Total e Finalizar Compra -->
+        <div id="cart-total" class="hidden text-right border-t border-gray-700 pt-4">
+            <p class="text-lg font-bold text-green-400">Frete grátis para todo o Brasil!</p>
+            <h3 class="text-xl font-bold">Subtotal: <span id="subtotal-price" class="text-purple-400">R$ 0,00</span></h3>
+            <a href="/checkout" id="checkout-button" class="mt-4 inline-block bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-lg text-lg font-semibold">Finalizar Compra</a>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-gray-300 mt-10">
+        <div class="container mx-auto px-6 py-8">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Sobre a Loja -->
+            <div>
+              <h3 class="font-bold text-lg text-white mb-2">Luerde GeekShop</h3>
+              <p class="text-sm">Sua loja definitiva para tudo do universo geek. De action figures a vestuário, temos o que você precisa para mostrar sua paixão.</p>
+            </div>
+            <!-- Links Rápidos -->
+            <div>
+              <h3 class="font-bold text-lg text-white mb-2">Links Rápidos</h3>
+              <ul class="space-y-2">
+                <li><a href="/sobre" class="hover:text-purple-400">Sobre Nós</a></li>
+                <li><a href="/contato" class="hover:text-purple-400">Contato</a></li>
+                <li><a href="/politica-de-privacidade" class="hover:text-purple-400">Política de Privacidade</a></li>
+              </ul>
+            </div>
+            <!-- Redes Sociais -->
+            <div>
+              <h3 class="font-bold text-lg text-white mb-2">Siga-nos</h3>
+              <p class="text-sm">Fique por dentro das novidades e promoções.</p>
+            </div>
+          </div>
+          <div class="mt-8 border-t border-gray-700 pt-4 text-center text-sm">
+            <p>© 2025 Luerde GeekShop. Todos os direitos reservados.</p>
+          </div>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

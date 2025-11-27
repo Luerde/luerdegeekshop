@@ -1,0 +1,64 @@
+# Luerde Geek Shop
+
+Uma aplicação de e-commerce simples para uma loja de produtos geek.
+
+## Tecnologias Utilizadas
+
+*   **Backend:** Java 21, Spring Boot
+*   **Frontend:** Thymeleaf, HTML, CSS, JavaScript
+*   **Banco de Dados:** MySQL
+*   **Build:** Maven
+
+## Pré-requisitos
+
+Antes de começar, você precisará ter instalado em sua máquina:
+
+*   [Java (JDK) 21](https://www.oracle.com/java/technologies/downloads/#java21)
+*   [Apache Maven](https://maven.apache.org/download.cgi)
+*   [MySQL Server](https://dev.mysql.com/downloads/mysql/)
+
+## 1. Configuração do Banco de Dados
+
+1.  **Inicie o seu servidor MySQL.**
+2.  **Crie o banco de dados.** Você pode usar um cliente MySQL (como o MySQL Workbench) ou a linha de comando para executar o seguinte comando:
+
+    ```sql
+    CREATE DATABASE luerdegeekshop;
+    ```
+
+    O Spring Boot, através do `data.sql`, irá popular algumas tabelas iniciais quando a aplicação iniciar.
+
+## 2. Configuração da Aplicação
+
+1.  Abra o arquivo `src/main/resources/application.properties`.
+2.  **Verifique e, se necessário, altere as credenciais do banco de dados** para corresponder à sua configuração local do MySQL. As linhas a serem alteradas são:
+
+    ```properties
+    spring.datasource.url=jdbc:mysql://localhost:3306/luerdegeekshop
+    spring.datasource.username=seu_usuario_mysql
+    spring.datasource.password=sua_senha_mysql
+    ```
+
+    *Substitua `seu_usuario_mysql` e `sua_senha_mysql` pelo seu usuário e senha do MySQL.*
+
+## 3. Como Executar o Projeto
+
+1.  Abra um terminal na pasta raiz do projeto (onde o arquivo `pom.xml` está localizado).
+2.  Execute o seguinte comando para iniciar a aplicação:
+
+    *   No Windows:
+        ```bash
+        mvnw.cmd spring-boot:run
+        ```
+    *   No Linux ou macOS:
+        ```bash
+        ./mvnw spring-boot:run
+        ```
+
+3.  Aguarde a aplicação iniciar. Você verá logs no terminal indicando que o servidor Tomcat foi iniciado na porta 8080.
+
+## 4. Acessando a Aplicação
+
+Após a inicialização, abra seu navegador e acesse a seguinte URL:
+
+[http://localhost:8080](http://localhost:8080)

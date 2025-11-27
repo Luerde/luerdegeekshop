@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plano de Testes - Luerde GeekShop</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+        }
+        h1, h2 {
+            color: #333;
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+        .failure {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Plano de Testes – Luerde GeekShop</h1>
+    <p>Este documento detalha os cenários de teste para as funcionalidades de autenticação e cadastro do sistema.</p>
+
+    <!-- Seção de Testes de Login -->
+    <h2>Tela 1: Login</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Campo</th>
+                <th>Valor Digitado</th>
+                <th>Resultado Esperado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>E-mail</td>
+                <td>usuario.cadastrado@email.com</td>
+                <td class="success">Sucesso: Campo preenchido com e-mail válido e existente no sistema.</td>
+            </tr>
+            <tr>
+                <td>E-mail</td>
+                <td>usuario.nao.existe@email.com</td>
+                <td class="failure">Insucesso: Mensagem de "Email ou senha inválidos".</td>
+            </tr>
+            <tr>
+                <td>E-mail</td>
+                <td>email-invalido</td>
+                <td class="failure">Insucesso: Validação do navegador deve impedir o envio (formato de e-mail incorreto).</td>
+            </tr>
+            <tr>
+                <td>E-mail</td>
+                <td>(vazio)</td>
+                <td class="failure">Insucesso: Validação do navegador deve impedir o envio (campo obrigatório).</td>
+            </tr>
+            <tr>
+                <td>Senha</td>
+                <td>senha_correta</td>
+                <td class="success">Sucesso: Senha correspondente ao e-mail informado.</td>
+            </tr>
+            <tr>
+                <td>Senha</td>
+                <td>senha_incorreta</td>
+                <td class="failure">Insucesso: Mensagem de "Email ou senha inválidos".</td>
+            </tr>
+            <tr>
+                <td>Senha</td>
+                <td>(vazio)</td>
+                <td class="failure">Insucesso: Validação do navegador deve impedir o envio (campo obrigatório).</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Seção de Testes de Cadastro -->
+    <h2>Tela 2: Cadastro de Novo Usuário</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Campo</th>
+                <th>Valor Digitado</th>
+                <th>Resultado Esperado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Nome de usuário</td>
+                <td>novo_usuario</td>
+                <td class="success">Sucesso: Campo preenchido.</td>
+            </tr>
+            <tr>
+                <td>Nome de usuário</td>
+                <td>(vazio)</td>
+                <td class="failure">Insucesso: Validação do navegador impede o envio.</td>
+            </tr>
+            <tr>
+                <td>E-mail</td>
+                <td>novo.usuario@email.com</td>
+                <td class="success">Sucesso: E-mail com formato válido e não existente no banco de dados.</td>
+            </tr>
+            <tr>
+                <td>E-mail</td>
+                <td>usuario.cadastrado@email.com</td>
+                <td class="failure">Insucesso: Mensagem de "Email já cadastrado".</td>
+            </tr>
+            <tr>
+                <td>E-mail</td>
+                <td>(vazio)</td>
+                <td class="failure">Insucesso: Validação do navegador impede o envio.</td>
+            </tr>
+            <tr>
+                <td>Senha</td>
+                <td>senhaForte123</td>
+                <td class="success">Sucesso: Campo preenchido.</td>
+            </tr>
+            <tr>
+                <td>Senha</td>
+                <td>(vazio)</td>
+                <td class="failure">Insucesso: Validação do navegador impede o envio.</td>
+            </tr>
+            <tr>
+                <td>Pergunta de Segurança</td>
+                <td>Qual o nome do meu primeiro pet?</td>
+                <td class="success">Sucesso: Campo preenchido.</td>
+            </tr>
+            <tr>
+                <td>Pergunta de Segurança</td>
+                <td>(vazio)</td>
+                <td class="failure">Insucesso: Validação do navegador impede o envio.</td>
+            </tr>
+            <tr>
+                <td>Resposta de Segurança</td>
+                <td>Rex</td>
+                <td class="success">Sucesso: Campo preenchido.</td>
+            </tr>
+            <tr>
+                <td>Resposta de Segurança</td>
+                <td>(vazio)</td>
+                <td class="failure">Insucesso: Validação do navegador impede o envio.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Seção de Testes de Recuperação de Senha -->
+    <h2>Tela 3: Recuperação de Senha</h2>
+    <h3>Passo 1: Identificação</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Campo</th>
+                <th>Valor Digitado</th>
+                <th>Resultado Esperado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>E-mail</td>
+                <td>usuario.cadastrado@email.com</td>
+                <td class="success">Sucesso: Redireciona para a tela com a pergunta de segurança.</td>
+            </tr>
+            <tr>
+                <td>E-mail</td>
+                <td>usuario.nao.existe@email.com</td>
+                <td class="failure">Insucesso: Exibe a mensagem "Usuário não encontrado." na mesma página.</td>
+            </tr>
+            <tr>
+                <td>E-mail</td>
+                <td>(vazio)</td>
+                <td class="failure">Insucesso: Validação do navegador impede o envio.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Passo 2: Redefinição</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Campo</th>
+                <th>Valor Digitado</th>
+                <th>Resultado Esperado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Resposta de Segurança</td>
+                <td>RespostaCorreta</td>
+                <td class="success">Sucesso: Resposta correspondente à cadastrada.</td>
+            </tr>
+            <tr>
+                <td>Resposta de Segurança</td>
+                <td>RespostaIncorreta</td>
+                <td class="failure">Insucesso: Mensagem de "Resposta de segurança incorreta."</td>
+            </tr>
+            <tr>
+                <td>Nova Senha</td>
+                <td>novaSenha123</td>
+                <td class="success">Sucesso: Campo preenchido.</td>
+            </tr>
+            <tr>
+                <td>Confirme a Nova Senha</td>
+                <td>novaSenha123</td>
+                <td class="success">Sucesso: Senha idêntica ao campo "Nova Senha".</td>
+            </tr>
+            <tr>
+                <td>Confirme a Nova Senha</td>
+                <td>senhaDiferente456</td>
+                <td class="failure">Insucesso: Mensagem de "As senhas não coincidem."</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Seção de Testes do Fluxo de Compras -->
+    <h2>Tela 4: Catálogo de Produtos</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Ação</th>
+                <th>Passos do Teste</th>
+                <th>Resultado Esperado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Visualizar produtos na página inicial</td>
+                <td>1. Acessar a página inicial.<br>2. Rolar até as seções "Promoções" e "Destaques".</td>
+                <td class="success">Sucesso: As seções carregam e exibem os produtos corretamente vindos da API.</td>
+            </tr>
+            <tr>
+                <td>Visualizar todos os produtos</td>
+                <td>1. Clicar no link "Produtos" no menu de navegação.</td>
+                <td class="success">Sucesso: A página de catálogo é carregada, exibindo todos os produtos disponíveis.</td>
+            </tr>
+            <tr>
+                <td>Adicionar produto ao carrinho</td>
+                <td>1. Na página de produtos, escolher um item.<br>2. Clicar no botão "Adicionar ao Carrinho".</td>
+                <td class="success">Sucesso: Uma notificação de sucesso é exibida e o produto é adicionado ao carrinho (LocalStorage).</td>
+            </tr>
+            <tr>
+                <td>Ajustar quantidade antes de adicionar</td>
+                <td>1. Na página de produtos, usar os botões `+` e `-` para alterar a quantidade.<br>2. Clicar em "Adicionar ao Carrinho".</td>
+                <td class="success">Sucesso: O produto é adicionado ao carrinho com a quantidade especificada.</td>
+            </tr>
+             <tr>
+                <td>Ver detalhes de um produto</td>
+                <td>1. Clicar no nome ou na imagem de um produto.</td>
+                <td class="success">Sucesso: O usuário é redirecionado para a página de detalhes do produto selecionado.</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <h2>Tela 5: Carrinho de Compras</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Ação</th>
+                <th>Passos do Teste</th>
+                <th>Resultado Esperado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Acessar carrinho vazio</td>
+                <td>1. Sem ter adicionado itens, clicar em "Carrinho" no menu.</td>
+                <td class="success">Sucesso: A página exibe a mensagem "Seu carrinho está vazio."</td>
+            </tr>
+            <tr>
+                <td>Acessar carrinho com itens</td>
+                <td>1. Adicionar um ou mais itens ao carrinho.<br>2. Clicar em "Carrinho" no menu.</td>
+                <td class="success">Sucesso: Os itens são listados corretamente, com suas quantidades, preços e o subtotal da compra.</td>
+            </tr>
+            <tr>
+                <td>Alterar quantidade de um item</td>
+                <td>1. No carrinho, usar os botões `+` ou `-` de um item.</td>
+                <td class="success">Sucesso: A quantidade e o subtotal são atualizados automaticamente.</td>
+            </tr>
+            <tr>
+                <td>Remover item do carrinho</td>
+                <td>1. No carrinho, clicar no botão "Remover" de um item.</td>
+                <td class="success">Sucesso: O item é removido da lista e o subtotal é recalculado.</td>
+            </tr>
+            <tr>
+                <td>Esvaziar carrinho</td>
+                <td>1. Remover todos os itens do carrinho.</td>
+                <td class="success">Sucesso: A página exibe a mensagem "Seu carrinho está vazio."</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Tela 6: Finalização de Compra (Checkout)</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Ação</th>
+                <th>Passos do Teste</th>
+                <th>Resultado Esperado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Acessar checkout sem estar logado</td>
+                <td>1. Adicionar itens ao carrinho.<br>2. Clicar em "Finalizar Compra".</td>
+                <td class="success">Sucesso: O usuário consegue visualizar a página de checkout (conforme configuração de segurança).</td>
+            </tr>
+            <tr>
+                <td>Finalizar compra sem estar logado</td>
+                <td>1. Na página de checkout, preencher os dados e clicar em "Finalizar Pedido".</td>
+                <td class="failure">Insucesso: O sistema deve redirecionar para a página de login, pois a finalização (POST) requer autenticação.</td>
+            </tr>
+            <tr>
+                <td>Finalizar compra estando logado</td>
+                <td>1. Fazer login.<br>2. Adicionar itens ao carrinho.<br>3. Acessar o checkout, preencher os dados e clicar em "Finalizar Pedido".</td>
+                <td class="success">Sucesso: O pedido é processado e o usuário é redirecionado para a página de agradecimento.</td>
+            </tr>
+            <tr>
+                <td>Verificar se o carrinho foi limpo</td>
+                <td>1. Após finalizar uma compra com sucesso, navegar para a página do carrinho.</td>
+                <td class="success">Sucesso: O carrinho deve estar vazio.</td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>

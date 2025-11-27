@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${product.name} + ' - Luerde GeekShop'">Produto</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-gray-900 text-gray-100 flex flex-col min-h-screen">
+    <header class="bg-gray-800 p-4 flex justify-between items-center">
+        <a href="/"><img src="/images/logo.png" alt="Luerde GeekShop Logo" class="h-16"></a>
+            <nav class="flex items-center">
+              <a href="/" class="px-2">Início</a>
+              <a href="/produtos" class="px-2">Produtos</a>
+                    <a href="/carrinho" class="px-2">Carrinho</a>
+                    <span sec:authorize="isAuthenticated()">
+                <span class="px-2">Olá, <span sec:authentication="name"></span></span>
+                <a href="/logout" class="px-2">Sair</a>
+              </span>
+              <span sec:authorize="!isAuthenticated()">
+                <a href="/login" class="px-2">Login</a>
+              </span>
+            </nav>
+    </header>
+
+    <main class="p-6 flex-grow container mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+                <img th:src="${product.imageUrl}" th:alt="${product.name}" class="rounded-lg w-full">
+            </div>
+            <div>
+                <h2 class="text-3xl font-bold mb-4" th:text="${product.name}">Nome do Produto</h2>
+                <p class="text-lg text-gray-300 mb-4" th:text="${product.description}">Descrição do produto.</p>
+                <div class="text-2xl font-bold text-purple-400 mb-4" th:text="'R$ ' + ${product.price}">R$ 99,99</div>
+                <div class="mt-4 flex items-center">
+                    <button class="product-quantity-change-btn bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded-l" th:data-product-id="${product.id}" data-change="-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                        </svg>
+                    </button>
+                    <input type="number" value="1" min="1" class="quantity-input bg-gray-700 text-white w-12 text-center" th:data-product-id="${product.id}">
+                    <button class="product-quantity-change-btn bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded-r" th:data-product-id="${product.id}" data-change="1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                    </button>
+                </div>
+                <button class="add-to-cart-btn mt-4 bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded w-full" th:data-product-id="${product.id}">Adicionar ao Carrinho</button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-gray-300 mt-10">
+        <div class="container mx-auto px-6 py-8">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+              <h3 class="font-bold text-lg text-white mb-2">Luerde GeekShop</h3>
+              <p class="text-sm">Sua loja definitiva para tudo do universo geek. De action figures a vestuário, temos o que você precisa para mostrar sua paixão.</p>
+            </div>
+            <div>
+              <h3 class="font-bold text-lg text-white mb-2">Links Rápidos</h3>
+              <ul class="space-y-2">
+                <li><a href="/sobre" class="hover:text-purple-400">Sobre Nós</a></li>
+                <li><a href="/contato" class="hover:text-purple-400">Contato</a></li>
+                <li><a href="/politica-privacidade" class="hover:text-purple-400">Política de Privacidade</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="font-bold text-lg text-white mb-2">Siga-nos</h3>
+              <p class="text-sm">Fique por dentro das novidades e promoções.</p>
+            </div>
+          </div>
+          <div class="mt-8 border-t border-gray-700 pt-4 text-center text-sm">
+            <p>© 2025 Luerde GeekShop. Todos os direitos reservados.</p>
+          </div>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

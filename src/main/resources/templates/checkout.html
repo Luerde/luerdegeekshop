@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - Luerde GeekShop</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-gray-900 text-gray-100 flex flex-col min-h-screen">
+  <header class="bg-gray-800 p-4 flex justify-between items-center">
+    <a href="/"><img src="/images/logo.png" alt="Luerde GeekShop Logo" class="h-16"></a>
+    <nav class="flex items-center">
+      <a href="/" class="px-2">Início</a>
+      <a href="/produtos" class="px-2">Produtos</a>
+      <a href="/carrinho" class="px-2">Carrinho</a>
+      <span sec:authorize="isAuthenticated()">
+        <span class="px-2">Olá, <span sec:authentication="name"></span></span>
+        <a href="/logout" class="px-2">Sair</a>
+      </span>
+      <span sec:authorize="!isAuthenticated()">
+        <a href="/login" class="px-2">Login</a>
+      </span>
+    </nav>
+  </header>
+
+  <main class="p-6 max-w-2xl mx-auto flex-grow">
+    <h2 class="text-2xl font-bold mb-4">Finalizar Compra</h2>
+    <form id="checkout-form" action="/checkout" method="post" class="space-y-4">
+      <input type="text" placeholder="Nome" class="px-4 py-2 rounded bg-gray-800 w-full" required>
+      <input type="email" placeholder="Email" id="email" name="email" class="px-4 py-2 rounded bg-gray-800 w-full" required>
+      <input type="text" placeholder="Endereço" class="px-4 py-2 rounded bg-gray-800 w-full" required>
+      <input type="text" placeholder="Cidade" class="px-4 py-2 rounded bg-gray-800 w-full" required>
+      <input type="text" placeholder="CEP" class="px-4 py-2 rounded bg-gray-800 w-full" required>
+      <h3 class="text-xl font-bold mb-2">Método de Pagamento</h3>
+      <div class="flex items-center">
+        <input type="radio" id="payment-card" name="payment-method" value="card" class="mr-2" checked>
+        <label for="payment-card">Pagar com Cartão</label>
+      </div>
+      <div class="flex items-center">
+        <input type="radio" id="payment-paypal" name="payment-method" value="paypal" class="mr-2">
+        <label for="payment-paypal">Pagar com PayPal</label>
+      </div>
+      <div class="flex items-center">
+        <input type="radio" id="payment-boleto" name="payment-method" value="boleto" class="mr-2">
+        <label for="payment-boleto">Pagar com Boleto</label>
+      </div>
+
+      <h3 class="text-xl font-bold mb-2">Apoie uma Causa (Opcional)</h3>
+      <div class="flex items-center">
+        <label for="ngo-donation" class="mr-2">Doe para uma ONG:</label>
+        <select id="ngo-donation" name="ngo-donation" class="px-4 py-2 rounded bg-gray-800 w-full">
+          <option value="">Nenhuma</option>
+          <option value="amigos-do-bem">Amigos do Bem</option>
+          <option value="apac">APAC</option>
+          <option value="wwf-brasil">WWF-Brasil</option>
+        </select>
+      </div>
+
+      <button class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded w-full">Confirmar Pedido</button>
+    </form>
+  </main>
+
+  <footer class="bg-gray-800 text-gray-300 mt-10">
+    <div class="container mx-auto px-6 py-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Sobre a Loja -->
+        <div>
+          <h3 class="font-bold text-lg text-white mb-2">Luerde GeekShop</h3>
+          <p class="text-sm">Sua loja definitiva para tudo do universo geek. De action figures a vestuário, temos o que você precisa para mostrar sua paixão.</p>
+        </div>
+        <!-- Links Rápidos -->
+        <div>
+          <h3 class="font-bold text-lg text-white mb-2">Links Rápidos</h3>
+          <ul class="space-y-2">
+            <li><a href="/sobre" class="hover:text-purple-400">Sobre Nós</a></li>
+            <li><a href="/contato" class="hover:text-purple-400">Contato</a></li>
+            <li><a href="/politica-de-privacidade" class="hover:text-purple-400">Política de Privacidade</a></li>
+          </ul>
+        </div>
+        <!-- Redes Sociais -->
+        <div>
+          <h3 class="font-bold text-lg text-white mb-2">Siga-nos</h3>
+          <p class="text-sm">Fique por dentro das novidades e promoções.</p>
+        </div>
+      </div>
+      <div class="mt-8 border-t border-gray-700 pt-4 text-center text-sm">
+        <p>© 2025 Luerde GeekShop. Todos os direitos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>
